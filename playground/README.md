@@ -1,0 +1,1 @@
+directory for testing small ideas - git ignored
