@@ -6,6 +6,7 @@ from tsl.nn.blocks.encoders import RNN
 from tsl.nn.layers import NodeEmbedding, GraphConv
 from einops.layers.torch import Rearrange  # reshape data with Einstein notation
 
+# boiler plate time then space model from tsl documentation (time: RNN (GRU) space: GCN)
 class TTS_RNN_GCN(nn.Module):
     def __init__(self, input_size: int, n_nodes: int, horizon: int, hidden_size: int = 32, rnn_layers: int = 1):
         super(TTS_RNN_GCN, self).__init__()
@@ -34,3 +35,22 @@ class TTS_RNN_GCN(nn.Module):
         x_out = self.decoder(z)  # linear decoder: z=[b n f] -> x_out=[b n t⋅f]
         x_horizon = self.rearrange(x_out)
         return x_horizon
+
+"""
+time then space model
+time: self-attention
+space: GAT
+"""
+class TTS_ATT_GAT(nn.Module):
+    def __init__(self, input_size: int, n_nodes: int, horizon: int, hidden_size: int = 32, n_heads: int = 8, n_layers: int = 1):
+        super(TTS_ATT_GAT, self).__init__()
+
+        self.encoder = nn.Linear(input_size, hidden_size)
+
+        self.node_embeddings = NodeEmbedding(n_nodes, hidden_size)
+        
+        self.decoder = nn.Linear(hidden_size, input_size * horizon)
+        self.rearrange = Rearrange('b n (t f) -> b t n f', t=horizon)
+    
+    def forward(self, x, edge_index, edge_weight):
+        pass

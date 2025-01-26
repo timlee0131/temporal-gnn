@@ -6,7 +6,7 @@ def get_config():
     config.computer = "local"
     config.n_gpus = 1 if config.computer == "superpod" else 0
     config.data_dir = (
-        "./experiments/data/metrLA"
+        "./data/metrLA"
         if config.computer == "local"
         else "/data/metrLA"
     )
