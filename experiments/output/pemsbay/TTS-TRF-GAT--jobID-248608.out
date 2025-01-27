@@ -1,0 +1,130 @@
+Requirement already satisfied: optuna in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from -r requirements.txt (line 1)) (4.2.0)
+Requirement already satisfied: ml_collections in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from -r requirements.txt (line 2)) (1.0.0)
+Requirement already satisfied: alembic>=1.5.0 in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from optuna->-r requirements.txt (line 1)) (1.14.1)
+Requirement already satisfied: colorlog in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from optuna->-r requirements.txt (line 1)) (6.9.0)
+Requirement already satisfied: numpy in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from optuna->-r requirements.txt (line 1)) (2.2.2)
+Requirement already satisfied: packaging>=20.0 in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from optuna->-r requirements.txt (line 1)) (24.2)
+Requirement already satisfied: sqlalchemy>=1.4.2 in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from optuna->-r requirements.txt (line 1)) (2.0.37)
+Requirement already satisfied: tqdm in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from optuna->-r requirements.txt (line 1)) (4.67.1)
+Requirement already satisfied: PyYAML in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from optuna->-r requirements.txt (line 1)) (6.0.2)
+Requirement already satisfied: absl-py in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from ml_collections->-r requirements.txt (line 2)) (2.1.0)
+Requirement already satisfied: six in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from ml_collections->-r requirements.txt (line 2)) (1.17.0)
+Requirement already satisfied: Mako in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from alembic>=1.5.0->optuna->-r requirements.txt (line 1)) (1.3.8)
+Requirement already satisfied: typing-extensions>=4 in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from alembic>=1.5.0->optuna->-r requirements.txt (line 1)) (4.12.2)
+Requirement already satisfied: greenlet!=0.4.17 in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from sqlalchemy>=1.4.2->optuna->-r requirements.txt (line 1)) (3.1.1)
+Requirement already satisfied: MarkupSafe>=0.9.2 in /users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages (from Mako->alembic>=1.5.0->optuna->-r requirements.txt (line 1)) (3.0.2)
+/users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages/tsl/datasets/pems_bay.py:84: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  date_range = pd.date_range(df.index[0], df.index[-1], freq='5T')
+/users/hunjael/.conda/envs/torch-st/lib/python3.10/site-packages/tsl/datasets/pems_bay.py:96: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  df.fillna(method='ffill', axis=0, inplace=True)
+1 head, 100 epochs
+
+Training Model...
+
+Epoch 1/100 - Average Train Loss (MSE): 396.4981 - Average Val Loss (MSE): 43.5625
+Epoch 2/100 - Average Train Loss (MSE): 38.3016 - Average Val Loss (MSE): 41.7670
+Epoch 3/100 - Average Train Loss (MSE): 37.6836 - Average Val Loss (MSE): 41.0529
+Epoch 4/100 - Average Train Loss (MSE): 37.3457 - Average Val Loss (MSE): 40.7594
+Epoch 5/100 - Average Train Loss (MSE): 37.0736 - Average Val Loss (MSE): 40.6719
+Epoch 6/100 - Average Train Loss (MSE): 37.0218 - Average Val Loss (MSE): 40.4013
+Epoch 7/100 - Average Train Loss (MSE): 36.5984 - Average Val Loss (MSE): 41.3883
+Epoch 8/100 - Average Train Loss (MSE): 36.2464 - Average Val Loss (MSE): 39.7795
+Epoch 9/100 - Average Train Loss (MSE): 36.0455 - Average Val Loss (MSE): 39.9261
+Epoch 10/100 - Average Train Loss (MSE): 35.9049 - Average Val Loss (MSE): 39.4484
+Epoch 11/100 - Average Train Loss (MSE): 35.6255 - Average Val Loss (MSE): 39.6330
+Epoch 12/100 - Average Train Loss (MSE): 35.7266 - Average Val Loss (MSE): 39.4683
+Epoch 13/100 - Average Train Loss (MSE): 35.5353 - Average Val Loss (MSE): 38.7927
+Epoch 14/100 - Average Train Loss (MSE): 34.9919 - Average Val Loss (MSE): 39.4080
+Epoch 15/100 - Average Train Loss (MSE): 35.0535 - Average Val Loss (MSE): 39.5580
+Epoch 16/100 - Average Train Loss (MSE): 34.6993 - Average Val Loss (MSE): 39.1370
+Epoch 17/100 - Average Train Loss (MSE): 35.3536 - Average Val Loss (MSE): 38.0580
+Epoch 18/100 - Average Train Loss (MSE): 35.1760 - Average Val Loss (MSE): 39.5163
+Epoch 19/100 - Average Train Loss (MSE): 34.8783 - Average Val Loss (MSE): 37.7345
+Epoch 20/100 - Average Train Loss (MSE): 34.6327 - Average Val Loss (MSE): 38.2331
+Epoch 21/100 - Average Train Loss (MSE): 34.4870 - Average Val Loss (MSE): 39.7246
+Epoch 22/100 - Average Train Loss (MSE): 34.3481 - Average Val Loss (MSE): 38.4368
+Epoch 23/100 - Average Train Loss (MSE): 34.3462 - Average Val Loss (MSE): 37.8495
+Epoch 24/100 - Average Train Loss (MSE): 34.8043 - Average Val Loss (MSE): 37.7419
+Epoch 25/100 - Average Train Loss (MSE): 34.5057 - Average Val Loss (MSE): 38.6520
+Epoch 26/100 - Average Train Loss (MSE): 34.2804 - Average Val Loss (MSE): 38.3950
+Epoch 27/100 - Average Train Loss (MSE): 34.1357 - Average Val Loss (MSE): 38.8709
+Epoch 28/100 - Average Train Loss (MSE): 34.2585 - Average Val Loss (MSE): 38.7554
+Epoch 29/100 - Average Train Loss (MSE): 34.3510 - Average Val Loss (MSE): 37.8226
+Epoch 30/100 - Average Train Loss (MSE): 34.2892 - Average Val Loss (MSE): 38.0070
+Epoch 31/100 - Average Train Loss (MSE): 34.3938 - Average Val Loss (MSE): 38.3171
+Epoch 32/100 - Average Train Loss (MSE): 33.9454 - Average Val Loss (MSE): 37.7965
+Epoch 33/100 - Average Train Loss (MSE): 33.8323 - Average Val Loss (MSE): 38.8739
+Epoch 34/100 - Average Train Loss (MSE): 34.1754 - Average Val Loss (MSE): 37.8778
+Epoch 35/100 - Average Train Loss (MSE): 33.8687 - Average Val Loss (MSE): 38.3032
+Epoch 36/100 - Average Train Loss (MSE): 33.7010 - Average Val Loss (MSE): 39.5519
+Epoch 37/100 - Average Train Loss (MSE): 33.8534 - Average Val Loss (MSE): 39.8567
+Epoch 38/100 - Average Train Loss (MSE): 33.9416 - Average Val Loss (MSE): 37.2617
+Epoch 39/100 - Average Train Loss (MSE): 33.6429 - Average Val Loss (MSE): 37.5617
+Epoch 40/100 - Average Train Loss (MSE): 33.4116 - Average Val Loss (MSE): 37.7757
+Epoch 41/100 - Average Train Loss (MSE): 33.5134 - Average Val Loss (MSE): 37.5230
+Epoch 42/100 - Average Train Loss (MSE): 33.4438 - Average Val Loss (MSE): 37.3475
+Epoch 43/100 - Average Train Loss (MSE): 33.7815 - Average Val Loss (MSE): 37.6156
+Epoch 44/100 - Average Train Loss (MSE): 33.6832 - Average Val Loss (MSE): 37.2571
+Epoch 45/100 - Average Train Loss (MSE): 33.4692 - Average Val Loss (MSE): 37.6649
+Epoch 46/100 - Average Train Loss (MSE): 33.4216 - Average Val Loss (MSE): 37.6332
+Epoch 47/100 - Average Train Loss (MSE): 33.2151 - Average Val Loss (MSE): 37.4398
+Epoch 48/100 - Average Train Loss (MSE): 33.3472 - Average Val Loss (MSE): 37.3741
+Epoch 49/100 - Average Train Loss (MSE): 33.2013 - Average Val Loss (MSE): 37.3196
+Epoch 50/100 - Average Train Loss (MSE): 33.1348 - Average Val Loss (MSE): 38.0783
+Epoch 51/100 - Average Train Loss (MSE): 33.1570 - Average Val Loss (MSE): 36.9804
+Epoch 52/100 - Average Train Loss (MSE): 33.0168 - Average Val Loss (MSE): 37.6448
+Epoch 53/100 - Average Train Loss (MSE): 33.0226 - Average Val Loss (MSE): 37.1445
+Epoch 54/100 - Average Train Loss (MSE): 32.9867 - Average Val Loss (MSE): 36.9935
+Epoch 55/100 - Average Train Loss (MSE): 33.2551 - Average Val Loss (MSE): 37.5364
+Epoch 56/100 - Average Train Loss (MSE): 33.0732 - Average Val Loss (MSE): 37.9063
+Epoch 57/100 - Average Train Loss (MSE): 32.8678 - Average Val Loss (MSE): 37.3936
+Epoch 58/100 - Average Train Loss (MSE): 32.5820 - Average Val Loss (MSE): 37.4716
+Epoch 59/100 - Average Train Loss (MSE): 30.9218 - Average Val Loss (MSE): 34.1611
+Epoch 60/100 - Average Train Loss (MSE): 29.1429 - Average Val Loss (MSE): 31.8365
+Epoch 61/100 - Average Train Loss (MSE): 27.1308 - Average Val Loss (MSE): 30.8638
+Epoch 62/100 - Average Train Loss (MSE): 26.3623 - Average Val Loss (MSE): 30.0916
+Epoch 63/100 - Average Train Loss (MSE): 26.0044 - Average Val Loss (MSE): 30.5472
+Epoch 64/100 - Average Train Loss (MSE): 25.7358 - Average Val Loss (MSE): 29.3410
+Epoch 65/100 - Average Train Loss (MSE): 25.5542 - Average Val Loss (MSE): 29.7046
+Epoch 66/100 - Average Train Loss (MSE): 25.4511 - Average Val Loss (MSE): 28.9300
+Epoch 67/100 - Average Train Loss (MSE): 25.3995 - Average Val Loss (MSE): 29.0764
+Epoch 68/100 - Average Train Loss (MSE): 25.2793 - Average Val Loss (MSE): 28.8699
+Epoch 69/100 - Average Train Loss (MSE): 25.2335 - Average Val Loss (MSE): 28.4270
+Epoch 70/100 - Average Train Loss (MSE): 25.1834 - Average Val Loss (MSE): 28.3286
+Epoch 71/100 - Average Train Loss (MSE): 25.1157 - Average Val Loss (MSE): 29.9714
+Epoch 72/100 - Average Train Loss (MSE): 25.0257 - Average Val Loss (MSE): 28.9642
+Epoch 73/100 - Average Train Loss (MSE): 24.9660 - Average Val Loss (MSE): 28.6394
+Epoch 74/100 - Average Train Loss (MSE): 25.0259 - Average Val Loss (MSE): 29.0452
+Epoch 75/100 - Average Train Loss (MSE): 24.8605 - Average Val Loss (MSE): 28.5267
+Epoch 76/100 - Average Train Loss (MSE): 24.8405 - Average Val Loss (MSE): 28.2982
+Epoch 77/100 - Average Train Loss (MSE): 24.7812 - Average Val Loss (MSE): 28.2251
+Epoch 78/100 - Average Train Loss (MSE): 24.7523 - Average Val Loss (MSE): 28.1652
+Epoch 79/100 - Average Train Loss (MSE): 24.7362 - Average Val Loss (MSE): 28.8539
+Epoch 80/100 - Average Train Loss (MSE): 24.6892 - Average Val Loss (MSE): 28.2719
+Epoch 81/100 - Average Train Loss (MSE): 24.6165 - Average Val Loss (MSE): 28.1371
+Epoch 82/100 - Average Train Loss (MSE): 24.6193 - Average Val Loss (MSE): 28.0565
+Epoch 83/100 - Average Train Loss (MSE): 24.6731 - Average Val Loss (MSE): 28.4581
+Epoch 84/100 - Average Train Loss (MSE): 24.5877 - Average Val Loss (MSE): 28.5523
+Epoch 85/100 - Average Train Loss (MSE): 24.5312 - Average Val Loss (MSE): 27.8928
+Epoch 86/100 - Average Train Loss (MSE): 24.5027 - Average Val Loss (MSE): 28.2720
+Epoch 87/100 - Average Train Loss (MSE): 24.4468 - Average Val Loss (MSE): 28.1561
+Epoch 88/100 - Average Train Loss (MSE): 24.4785 - Average Val Loss (MSE): 27.6700
+Epoch 89/100 - Average Train Loss (MSE): 24.4477 - Average Val Loss (MSE): 27.9735
+Epoch 90/100 - Average Train Loss (MSE): 24.4588 - Average Val Loss (MSE): 27.9434
+Epoch 91/100 - Average Train Loss (MSE): 24.4471 - Average Val Loss (MSE): 27.6952
+Epoch 92/100 - Average Train Loss (MSE): 24.3960 - Average Val Loss (MSE): 27.7328
+Epoch 93/100 - Average Train Loss (MSE): 24.3501 - Average Val Loss (MSE): 27.6939
+Epoch 94/100 - Average Train Loss (MSE): 24.3809 - Average Val Loss (MSE): 27.8917
+Epoch 95/100 - Average Train Loss (MSE): 24.3800 - Average Val Loss (MSE): 27.9043
+Epoch 96/100 - Average Train Loss (MSE): 24.3585 - Average Val Loss (MSE): 27.8704
+Epoch 97/100 - Average Train Loss (MSE): 24.2697 - Average Val Loss (MSE): 27.6479
+Epoch 98/100 - Average Train Loss (MSE): 24.2483 - Average Val Loss (MSE): 27.6190
+Epoch 99/100 - Average Train Loss (MSE): 24.3272 - Average Val Loss (MSE): 27.8626
+Epoch 100/100 - Average Train Loss (MSE): 24.3230 - Average Val Loss (MSE): 27.7540
+
+Test Loss: 2.7558
+
+Model Run Complete...
+
+Total time taken for trainer execution: 10.67 minutes
+

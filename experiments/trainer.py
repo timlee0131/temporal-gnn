@@ -6,7 +6,7 @@ import importlib
 from tqdm import tqdm
 import time
 
-from models.models import TTS_RNN_GCN
+from models.models import TTS_RNN_GCN, TTS_TRF_GAT
 from experiments.loader import load_dataset_tsl
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -93,7 +93,10 @@ def driver(config_name):
     
     data = load_dataset_tsl(config, device)
     
-    model = TTS_RNN_GCN(
+    # print the config description
+    print(config.description)
+    
+    tts_rnn_gcn = TTS_RNN_GCN(
         input_size=config.num_channels,
         n_nodes=config.num_nodes,
         horizon=config.horizon,
@@ -101,8 +104,20 @@ def driver(config_name):
         rnn_layers=config.rnn_layers
     ).to(device)
     
+    tts_transformer = TTS_TRF_GAT(
+        input_size=config.num_channels,
+        n_nodes=config.num_nodes,
+        window=config.window,
+        horizon=config.horizon,
+        hidden_size=config.trf_hidden_dim,
+        n_heads=config.num_heads,
+        attention_dropout=config.attention_dropout,
+        ff_dropout=config.ff_dropout,
+        n_layers=config.num_trf_layers
+    ).to(device)
+    
     start_time = time.time()
-    train_tsl(config, model, data, verbose=config.verbose)
+    train_tsl(config, tts_rnn_gcn, data, verbose=config.verbose)
     end_time = time.time()
     
     if config.time_verbose:
