@@ -12,7 +12,7 @@ def get_config():
     )
     
     # Description
-    config.description = "\n CONFIG DESCRIPTION: 8 heads, 100 epochs, 3 layer GAT"
+    config.description = "\nCONFIG DESCRIPTION: 8 heads, 100 epochs, 3 layer GAT"
 
     # Dataset
     config.dataset = 'pemsbay'
@@ -36,7 +36,7 @@ def get_config():
     config.rnn_layers = 1
     
     # Model - TTS_TRF_GAT
-    config.trf_hidden_dim = 24
+    config.trf_hidden_dim = 4
     config.num_heads = 8
     config.num_trf_layers = 1
     config.attention_dropout = 0.6

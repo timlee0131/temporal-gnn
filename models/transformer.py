@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from models.attention import PositionalEncoding, SelfAttention
 
 class TemporalTransformer(nn.Module):
-    def __init__(self, input_size, hidden_size, window, horizon, num_heads=8, num_layers=1, attention_dropout=0.6, feedforward_dropout=0.1):
+    def __init__(self, config, input_size, hidden_size, window, horizon, num_heads=8, num_layers=1, attention_dropout=0.6, feedforward_dropout=0.1):
         super(TemporalTransformer, self).__init__()
         
         self.input_size = input_size * window
@@ -21,7 +21,7 @@ class TemporalTransformer(nn.Module):
         self.positional_encoding = PositionalEncoding(self.hidden_plus_window_size)
         self.transformers = nn.ModuleList([
             nn.Sequential(
-                SelfAttention(self.hidden_plus_window_size, self.hidden_plus_window_size, window, horizon, num_heads, attention_dropout),
+                SelfAttention(config, self.hidden_plus_window_size, self.hidden_plus_window_size, window, horizon, num_heads, attention_dropout),
                 nn.LayerNorm(self.hidden_plus_window_size),
                 nn.Dropout(feedforward_dropout),
                 nn.Linear(self.hidden_plus_window_size, self.hidden_plus_window_size * 2),

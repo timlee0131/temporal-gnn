@@ -12,7 +12,7 @@ def get_config():
     )
 
     # Description
-    config.description = "50 epochs, 1e-3 lr, 24 hidden dim, 1 TRF layer, 3 GATConvs"
+    config.description = "\ntemporal only model, 150 epochs, lr=0.005"
     
     # Dataset
     config.dataset = 'metrLA'
@@ -32,18 +32,18 @@ def get_config():
     config.test_ratio = 0.2
     
     # Model - TTS_RNN_GCN
-    config.hidden_dim = 24
+    config.hidden_dim = 32
     config.rnn_layers = 1
     
     # Model - TTS_TRF_GAT
-    config.trf_hidden_dim = 24
-    config.num_heads = 8
-    config.num_trf_layers = 1
+    config.trf_hidden_dim = 4
+    config.num_heads = 6
+    config.num_trf_layers = 2
     config.attention_dropout = 0.6
     config.ff_dropout = 0.2
     
     # Training
-    config.epochs = 50
+    config.epochs = 150
     config.lr = 0.001
     
     # misc.

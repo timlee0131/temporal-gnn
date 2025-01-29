@@ -44,19 +44,19 @@ time: transformer
 space: GAT
 """
 class TTS_TRF_GAT(nn.Module):
-    def __init__(self, input_size: int, n_nodes: int, window: int, horizon: int, hidden_size: int, n_heads: int = 8, attention_dropout=0.6, ff_dropout=0.1, n_layers: int = 1):
+    def __init__(self, config, input_size: int, n_nodes: int, window: int, horizon: int, hidden_size: int, n_heads: int = 8, attention_dropout=0.6, ff_dropout=0.1, n_layers: int = 1):
         super(TTS_TRF_GAT, self).__init__()
 
         # time nn
-        self.temporal_transformer = TemporalTransformer(input_size=input_size, hidden_size=hidden_size, window=window, horizon=horizon, num_heads=n_heads, num_layers=n_layers, attention_dropout=attention_dropout, feedforward_dropout=ff_dropout)
+        self.temporal_transformer = TemporalTransformer(config=config, input_size=input_size, hidden_size=hidden_size, window=window, horizon=horizon, num_heads=n_heads, num_layers=n_layers, attention_dropout=attention_dropout, feedforward_dropout=ff_dropout)
         
         # space nn
         # self.space_nn = GraphConv(input_size=hidden_size, output_size=hidden_size)
-        self.space_nn = nn.ModuleList([
-            GATConv(hidden_size, hidden_size, heads=n_heads, dropout=attention_dropout, edge_dim=0),
-            GATConv(hidden_size, hidden_size, heads=8, dropout=attention_dropout, edge_dim=0),
-            GATConv(hidden_size, hidden_size, heads=1, concat=False, dropout=attention_dropout, edge_dim=0)
-            ])
+        # self.space_nn = nn.ModuleList([
+        #     GATConv(hidden_size, hidden_size, heads=n_heads, dropout=attention_dropout, edge_dim=0),
+        #     GATConv(hidden_size, hidden_size, heads=1, concat=False, dropout=attention_dropout, edge_dim=0),
+        #     # GATConv(hidden_size, hidden_size, heads=1, concat=False, dropout=attention_dropout, edge_dim=0)
+        #     ])
         
         
         self.decoder = nn.Linear(hidden_size, input_size * horizon)
@@ -64,11 +64,12 @@ class TTS_TRF_GAT(nn.Module):
     
     def forward(self, x, edge_index, edge_weight):
         h = self.temporal_transformer(x)
+        
         # h = self.space_nn(h, edge_index, edge_weight)        
-        for i, conv in enumerate(self.space_nn):
-            h, _ = conv(h, edge_index, edge_weight)
-            if i < len(self.space_nn) - 1:
-                h = F.elu(h)
+        # for i, conv in enumerate(self.space_nn):
+        #     h, _ = conv(h, edge_index, edge_weight)
+        #     if i < len(self.space_nn) - 1:
+        #         h = F.elu(h)
         
         x_out = self.decoder(h)
         x_horizon = self.rearrange(x_out)

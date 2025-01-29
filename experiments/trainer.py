@@ -105,6 +105,7 @@ def driver(config_name):
     ).to(device)
     
     tts_transformer = TTS_TRF_GAT(
+        config=config,
         input_size=config.num_channels,
         n_nodes=config.num_nodes,
         window=config.window,
@@ -117,7 +118,7 @@ def driver(config_name):
     ).to(device)
     
     start_time = time.time()
-    train_tsl(config, tts_rnn_gcn, data, verbose=config.verbose)
+    train_tsl(config, tts_transformer, data, verbose=config.verbose)
     end_time = time.time()
     
     if config.time_verbose:
