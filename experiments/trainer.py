@@ -6,8 +6,8 @@ import importlib
 from tqdm import tqdm
 import time
 
-from models.models import TTS_RNN_GCN, TTS_TRF_GAT
-from experiments.loader import load_dataset_tsl
+from data_pipeline.loader import load_dataset_tsl
+from experiments.get_models import get_model
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -19,11 +19,7 @@ def get_config(config_name):
     return module.get_config()
 
 # trainer for torch TSL datasets
-def train_tsl(config, model, data, verbose=False):
-    train_loader = data.train_dataloader()
-    val_loader = data.val_dataloader()
-    test_loader = data.test_dataloader()
-    
+def train(config, model, train_loader, val_loader, verbose=False):
     epochs = config.epochs
     criterion = nn.MSELoss()
     eval_criterion = nn.L1Loss()
@@ -34,19 +30,17 @@ def train_tsl(config, model, data, verbose=False):
     print("Training Model...\n")
 
     for epoch in range(epochs):
-        model.train()
-        
+        model.train()        
         train_epoch_loss = 0.0
         val_epoch_loss = 0.0
         
-        for batch in train_loader:
-            optimizer.zero_grad()
-            
+        for batch in train_loader:            
             x, edge_index, edge_weight, y = batch.x.to(device), batch.edge_index.to(device), batch.edge_weight.to(device), batch.y.to(device)
             
             y_hat = model(x, edge_index, edge_weight)
             loss = criterion(y_hat, y)
             
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             
@@ -64,8 +58,12 @@ def train_tsl(config, model, data, verbose=False):
         avg_train_epoch_loss = train_epoch_loss / len(train_loader)
         avg_val_epoch_loss = val_epoch_loss / len(val_loader)
         
-        print(f"Epoch {epoch + 1}/{epochs} - Average Train Loss (MSE): {avg_train_epoch_loss:.4f} - Average Val Loss (MSE): {avg_val_epoch_loss:.4f}")
-        
+        print(f"Epoch {epoch + 1}/{epochs} - Train Loss (MSE): {avg_train_epoch_loss:.4f} - Val Loss (MSE): {avg_val_epoch_loss:.4f}")
+    
+    return model
+
+def test(config, model, test_loader):
+    eval_criterion = nn.L1Loss()
     # Test loop
     total_test_loss = 0.0
     model.eval()
@@ -83,43 +81,25 @@ def train_tsl(config, model, data, verbose=False):
     print()
     print("Model Run Complete...\n")
 
-# TODO: implement this function for training on custom datasets
-def train_custom(config, model, data):
-    pass
-
-def driver(config_name):
-    config_path = f'./experiments/configs/{config_name}.py'
+def driver(config_name, model_name):
+    config_path = f'./configs/{config_name}.py'
     config = get_config(config_path)
     
-    data = load_dataset_tsl(config, device)
+    data = load_dataset_tsl(config)
+    train_loader = data.train_dataloader()
+    val_loader = data.val_dataloader()
+    test_loader = data.test_dataloader()
+    
+    model = get_model(config, model_name).to(device)
     
     # print the config description
     print(config.description)
     
-    tts_rnn_gcn = TTS_RNN_GCN(
-        input_size=config.num_channels,
-        n_nodes=config.num_nodes,
-        horizon=config.horizon,
-        hidden_size=config.hidden_dim,
-        rnn_layers=config.rnn_layers
-    ).to(device)
-    
-    tts_transformer = TTS_TRF_GAT(
-        config=config,
-        input_size=config.num_channels,
-        n_nodes=config.num_nodes,
-        window=config.window,
-        horizon=config.horizon,
-        hidden_size=config.trf_hidden_dim,
-        n_heads=config.num_heads,
-        attention_dropout=config.attention_dropout,
-        ff_dropout=config.ff_dropout,
-        n_layers=config.num_trf_layers
-    ).to(device)
-    
     start_time = time.time()
-    train_tsl(config, tts_transformer, data, verbose=config.verbose)
+    trained_model = train(config, model, train_loader, val_loader, verbose=config.verbose)
     end_time = time.time()
+    
+    test(config, trained_model, test_loader)
     
     if config.time_verbose:
         print(f"Total time taken for trainer execution: {((end_time - start_time)/60.0):.2f} minutes\n")

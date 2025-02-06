@@ -3,7 +3,7 @@ from tsl.data import SpatioTemporalDataset
 from tsl.data.datamodule import SpatioTemporalDataModule, TemporalSplitter
 from tsl.data.preprocessing import StandardScaler
 
-def load_dataset_tsl(config, device):
+def load_dataset_tsl(config):
     if config.dataset == 'metrLA':
         dataset = MetrLA(root=config.data_dir)
     elif config.dataset == 'pemsbay':
@@ -41,6 +41,6 @@ def load_dataset_tsl(config, device):
     
     return data_module
 
-def load_dataset_custom(config, device):
+def load_dataset_custom(config):
     # TODO: implement this function for loading in custom data (from torch pickle)
     pass

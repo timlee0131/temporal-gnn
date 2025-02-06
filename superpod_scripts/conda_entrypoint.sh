@@ -10,10 +10,9 @@ sig_handler() {
 # Trap signals and call the handler function
 trap 'sig_handler' SIGTERM SIGINT SIGCONT
 
-# install the graph_jepa module in editable mode
-cd /users/hunjael/Projects/wave-forecast/
+cd /users/hunjael/Projects/temporal-gnn/
 python -m pip install -r requirements.txt
 
-python main.py gnn -d labn
+python main.py -d metrLA -m dstan_v1
 srun_pid=$!
 wait $srun_pid

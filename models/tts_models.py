@@ -6,7 +6,7 @@ from tsl.nn.blocks.encoders import RNN
 from tsl.nn.layers import NodeEmbedding, GraphConv, GATConv
 from einops.layers.torch import Rearrange  # reshape data with Einstein notation
 
-from models.transformer import TemporalTransformer
+from models.transformers.transformer import TemporalTransformer
 
 # boiler plate time then space model from tsl documentation (time: RNN (GRU) space: GCN)
 class TTS_RNN_GCN(nn.Module):
@@ -40,18 +40,19 @@ class TTS_RNN_GCN(nn.Module):
 
 """
 time then space model
-time: transformer
+time: transformer (intra-node attention)
 space: GAT
 """
 class TTS_TRF_GAT(nn.Module):
-    def __init__(self, config, input_size: int, n_nodes: int, window: int, horizon: int, hidden_size: int, n_heads: int = 8, attention_dropout=0.6, ff_dropout=0.1, n_layers: int = 1):
+    def __init__(self, config, input_size: int, n_nodes: int, window: int, horizon: int, time_hidden: int, space_hidden: int, n_heads: int = 8, attention_dropout=0.6, ff_dropout=0.1, n_layers: int = 1):
         super(TTS_TRF_GAT, self).__init__()
 
         # time nn
-        self.temporal_transformer = TemporalTransformer(config=config, input_size=input_size, hidden_size=hidden_size, window=window, horizon=horizon, num_heads=n_heads, num_layers=n_layers, attention_dropout=attention_dropout, feedforward_dropout=ff_dropout)
+        self.temporal_transformer = TemporalTransformer(config=config, input_size=input_size, hidden_size=time_hidden, window=window, horizon=horizon, num_heads=n_heads, num_layers=n_layers, attention_dropout=attention_dropout, feedforward_dropout=ff_dropout)
+        # self.time_decoder = nn.Linear(time_hidden * window, space_hidden)
         
         # space nn
-        # self.space_nn = GraphConv(input_size=hidden_size, output_size=hidden_size)
+        self.space_nn = GraphConv(input_size=space_hidden, output_size=space_hidden)
         # self.space_nn = nn.ModuleList([
         #     GATConv(hidden_size, hidden_size, heads=n_heads, dropout=attention_dropout, edge_dim=0),
         #     GATConv(hidden_size, hidden_size, heads=1, concat=False, dropout=attention_dropout, edge_dim=0),
@@ -59,11 +60,16 @@ class TTS_TRF_GAT(nn.Module):
         #     ])
         
         
-        self.decoder = nn.Linear(hidden_size, input_size * horizon)
+        # self.decoder = nn.Linear(space_hidden, input_size * horizon)
+        self.decoder = nn.Linear(time_hidden, input_size * horizon)
         self.rearrange = Rearrange('b n (t f) -> b t n f', t=horizon)
     
     def forward(self, x, edge_index, edge_weight):
         h = self.temporal_transformer(x)
+
+        # h = h.permute(0,2,1,3)
+        # h = h.reshape(h.size(0), h.size(1), h.size(2) * h.size(3))
+        # h = self.time_decoder(h)
         
         # h = self.space_nn(h, edge_index, edge_weight)        
         # for i, conv in enumerate(self.space_nn):
@@ -75,4 +81,3 @@ class TTS_TRF_GAT(nn.Module):
         x_horizon = self.rearrange(x_out)
         
         return x_horizon
-        

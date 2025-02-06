@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 #SBATCH -A coreyc_coreyc_mp_jepa_0001
 #SBATCH -J test
-#SBATCH -o ../output/pemsbay/TTS-TRF-GAT--jobID-%j.out
-#SBATCH -c 16 --mem=82G
+#SBATCH -o ./experiments/output/metrLA/TGAT--jobID-%j.out
+#SBATCH -c 16 --mem=256G
 #SBATCH --nodes=1
 #SBATCH -G 1
 #SBATCH --ntasks-per-node=1
@@ -24,4 +24,4 @@ module load conda
 conda activate /users/hunjael/.conda/envs/torch-st
 
 srun\
-    bash -c "${HOME}/Projects/temporal-gnn/experiments/superpod_scripts/conda_entrypoint.sh"
+    bash -c "${HOME}/Projects/temporal-gnn/superpod_scripts/conda_entrypoint.sh"
