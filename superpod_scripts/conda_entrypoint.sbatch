@@ -1,12 +1,11 @@
 #!/usr/bin/env zsh
 #SBATCH -A coreyc_coreyc_mp_jepa_0001
-#SBATCH -J test
-#SBATCH -o ./experiments/output/metrLA/TGAT--jobID-%j.out
-#SBATCH -c 16 --mem=256G
+#SBATCH -J train
+#SBATCH -o ./experiments/output/metrLA/MPDSTANv2--jobID-%j.out
+#SBATCH -c 32 --mem=82G
 #SBATCH --nodes=1
+#SBATCH --time=1-00:00:00
 #SBATCH -G 1
-#SBATCH --ntasks-per-node=1
-#SBATCH --mail-type=NONE     
 
 
 current_percentage=0.1

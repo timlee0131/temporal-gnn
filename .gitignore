@@ -1,8 +1,12 @@
 playground/
 
 data/
+output/
+wandb/
 
 logs/
 lightning_logs/
 
 __pycache__/
+
+wandb/

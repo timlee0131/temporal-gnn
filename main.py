@@ -20,12 +20,16 @@ def get_args():
     --program
         train: train model
         tune: tune model
+    --wandb
+        enabled: wandb enabled
+        disabled: wandb disabled
     """
     parser = argparse.ArgumentParser(description="Temporal GNN Research")
     
     parser.add_argument("-d", "--dataset", type=str, default="metrLA", choices=['metrLA', 'pemsbay'], help="Dataset to use")
-    parser.add_argument("-m", "--model", type=str, default="tgat", choices=['st_tran', 'travnet', 'tts_rnn_gcn', 'tts_trf_gat', 'tgat', 'dstan_v1', 'dstan_v2'], help="Model to use")
+    parser.add_argument("-m", "--model", type=str, default="mp_dstan", choices=['st_tran', 'travnet', 'tts_rnn_gcn', 'tts_trf_gat', 'tgat', 'dstan_v1', 'tan', 'mp_dstan', 'mp_dstanv2', 'transformer_dsta'], help="Model to use")
     parser.add_argument("-p", "--program", type=str, default="train", choices=['train', 'tune'], help="Program to run")
+    parser.add_argument("-w", "--wandb", type=str, default="disabled", choices=['e', 'enabled', 'd', 'disabled'], help="Wandb mode")
     
     args = parser.parse_args()
     
@@ -35,9 +39,9 @@ def main():
     args = get_args()
 
     if args.program == "train":
-        trainer.driver(args.dataset, args.model)
+        trainer.driver(args.dataset, args.model, args.wandb)
     elif args.program == "tune":
-        print("Tuning not implemented yet")
+        trainer.tuner(args.dataset, args.model, args.wandb)
     else:
         print(f"Invalid program: {args.program}")
     

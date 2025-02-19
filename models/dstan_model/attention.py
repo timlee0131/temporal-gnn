@@ -2,10 +2,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models.transformersV2.util import PositionalEncoding, build_combined_mask
+from torch_geometric.nn import MessagePassing
+
+from models.dstan_model.util import PositionalEncoding, build_combined_mask
 
 """
-Temporal Attention
+Currently only using MessagePassingDSTA as this is the best implementation
+"""
+
+"""
+Temporal Attention O(N * T^2 * d)
 """
 class TemporalAttention(nn.Module):
     def __init__(self, input_size, hidden_size, window_size, num_heads=8, dropout=0.6):
@@ -50,9 +56,11 @@ class TemporalAttention(nn.Module):
         
         out_self = out_self.transpose(2, 3).contiguous().view(B, N, T, self.hidden_size * self.num_heads)
         out_self = self.out(out_self)
+        
+        return out_self
 
 """
-Dynamic Spatio-Temporal Attention with 2 possible variants (conditioned on self_mask)
+Dynamic Spatio-Temporal Attention with 2 possible variants (conditioned on self_mask) O(N^2 * T^2 * d)
     1. combine self-attention and cross-attention
     2. separate self-attention and cross-attention
 """
@@ -79,7 +87,7 @@ class DynamicSpatioTemporalAttention(nn.Module):
         self.scale = hidden_size ** 0.5
         
         # includes self-loop for self-attention + causal mask for ST attention
-        # self.causal_mask = torch.triu(torch.ones(num_nodes * window_size, num_nodes * window_size), diagonal=1).bool()
+        # mask = torch.triu(torch.ones(num_nodes * window_size, num_nodes * window_size), diagonal=1).bool()
         # self.register_buffer('mask', mask)
     
     def forward(self, x, mask):
@@ -100,15 +108,17 @@ class DynamicSpatioTemporalAttention(nn.Module):
         V_flat = V.reshape(B, self.num_heads, N * T, self.hidden_size)
         
         e = Q_flat @ K_flat.mT / self.scale # (B, num_heads, N * T, N * T)
+        # e = e.masked_fill(self.mask, float('-inf'))
         e = e.masked_fill(mask, float('-inf'))
         
         attention = F.softmax(e, dim=-1)
         attention = self.dropout(attention)
         
         out_flat = attention @ V_flat # (B, num_heads, N * T, hidden_size)
-        out = out_flat.reshape(B, self.num_heads, N, T, self.hidden_size).transpose(1,3) # (B, N, T, num_heads, hidden_size)
+        # out = out_flat.transpose(1, 2).reshape(B, N, T, self.num_heads, self.hidden_size)
+        # out = out_flat.reshape(B, self.num_heads, N, T, self.hidden_size).transpose(1,3) # (B, N, T, num_heads, hidden_size)
         
-        out = out.contiguous().view(B, N, T, self.num_heads * self.hidden_size)
+        out = out_flat.transpose(1, 2).contiguous().view(B, N, T, self.num_heads * self.hidden_size)
         out = self.out(out)
         
         return out
