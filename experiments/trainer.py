@@ -11,7 +11,7 @@ import wandb
 import os
 import time
 
-from data_pipeline.loader import load_dataset_tsl
+from data_pipeline.loader import load_dataset_tsl, load_dataset_benchmarks
 from experiments.get_models import get_model
 from experiments.sweep_config import sweep_configuration
 from experiments.utils import EarlyStopping
@@ -25,11 +25,12 @@ def get_config(config_name):
     return module.get_config()
 
 # trainer for torch TSL datasets
-def train(config, model, train_loader, val_loader, verbose=False):
+def train(config, model, train_loader, val_loader):
     epochs = config.epochs
     criterion = nn.MSELoss()
     eval_criterion = nn.L1Loss()
     optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
+    verbose = config.verbose
     
     warmup_scheduler = LinearLR(optimizer, start_factor=0.001, end_factor=1.0, total_iters=config.warmup_epochs)
     main_scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=config.lr_min)
@@ -52,7 +53,8 @@ def train(config, model, train_loader, val_loader, verbose=False):
         
         epoch_start_time = time.time()
         for batch in train_loader:
-            x, edge_index, edge_weight, y = batch.x.to(device), batch.edge_index.to(device), batch.edge_weight.to(device), batch.y.to(device)
+            x, edge_index, y = batch.x.to(device), batch.edge_index.to(device), batch.y.to(device)
+            edge_weight = batch.edge_weight.to(device) if batch.edge_weight is not None else None
             
             y_hat = model(x, edge_index, edge_weight)
             loss = criterion(y_hat, y)
@@ -72,7 +74,8 @@ def train(config, model, train_loader, val_loader, verbose=False):
         model.eval()
         with torch.no_grad():
             for batch in val_loader:
-                x, edge_index, edge_weight, y = batch.x.to(device), batch.edge_index.to(device), batch.edge_weight.to(device), batch.y.to(device)                
+                x, edge_index, y = batch.x.to(device), batch.edge_index.to(device), batch.y.to(device)
+                edge_weight = batch.edge_weight.to(device) if batch.edge_weight is not None else None
                 
                 y_hat = model(x, edge_index, edge_weight)
                 val_epoch_loss += criterion(y_hat, y).item()
@@ -94,11 +97,12 @@ def train(config, model, train_loader, val_loader, verbose=False):
             
         if epoch > 4:
             # wandb.log({"train_loss": avg_train_epoch_loss, "val_loss": avg_val_epoch_loss, "learning rate": scheduler.get_last_lr()[0]})
-            wandb.log({"train_loss (mse)": avg_train_epoch_loss, "val_loss (mse)": avg_val_epoch_loss, 'val_loss (mae)': avg_mae_epoch_loss, 'runtime_epoch (sec)': (epoch_end_time - epoch_start_time)})
+            wandb.log({f"train_loss (mse)": avg_train_epoch_loss, f"val_loss (mse)": avg_val_epoch_loss, f'val_loss (mae)': avg_mae_epoch_loss, f'runtime_epoch (sec)': (epoch_end_time - epoch_start_time)})
     
     avg_epoch_runtime /= epochs
     
     print(f"Average runtime per epoch: {avg_epoch_runtime:.2f} seconds")
+    wandb.log({f"avg_epoch_runtime (sec)": avg_epoch_runtime})
     
     return model
 
@@ -109,19 +113,15 @@ def test(config, model, test_loader):
     model.eval()
     with torch.no_grad():
         for batch in test_loader:
-            x, edge_index, edge_weight, y = batch.x.to(device), batch.edge_index.to(device), batch.edge_weight.to(device), batch.y.to(device)
+            x, edge_index, y = batch.x.to(device), batch.edge_index.to(device), batch.y.to(device)
+            edge_weight = batch.edge_weight.to(device) if batch.edge_weight is not None else None
             
             y_hat = model(x, edge_index, edge_weight)
             total_test_loss += eval_criterion(y_hat, y).item()
     
     avg_test_loss = total_test_loss / len(test_loader)
-
-    print()
-    print(f"Test Loss: {avg_test_loss:.4f}")    
-    wandb.log({"test_loss (mae)": avg_test_loss})
     
-    print()
-    print("Model Run Complete...\n")
+    return avg_test_loss
 
 """
 wandb hyperparameter sweep
@@ -190,16 +190,32 @@ def driver(config_name, model_name, wandb_mode='disabled'):
             "dataset": config.dataset,
         },
     )
+    
 
     data = load_dataset_tsl(config)
+    
     train_loader = data.train_dataloader()
     val_loader = data.val_dataloader()
     test_loader = data.test_dataloader()
     
-    model = get_model(config, model_name).to(device)
+    losses = []
+    for run in range(config.runs):
+        model = get_model(config, model_name).to(device)
     
-    start_time = time.time()
-    trained_model = train(config, model, train_loader, val_loader, verbose=config.verbose)
-    end_time = time.time()
+        start_time = time.time()
+        trained_model = train(config, model, train_loader, val_loader)
+        end_time = time.time()
+        
+        test_loss = test(config, trained_model, test_loader)
+        losses.append(test_loss)
+        
+        print()
+        print(f"Test Loss: {test_loss:.4f}")    
+        wandb.log({f"test_loss (mae)": test_loss})
+
+    avg_test_loss = np.mean(losses)
+    std_test_loss = np.std(losses)
     
-    test(config, trained_model, test_loader)
+    print(f"Average Test Loss over {config.runs} runs: {avg_test_loss:.4f}")
+    print(f"Std Test Loss over {config.runs} runs: {std_test_loss:.4f}")
+    wandb.log({f"avg_test_loss (mae)": avg_test_loss, f"std_test_loss": std_test_loss})

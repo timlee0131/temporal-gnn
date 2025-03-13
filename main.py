@@ -8,15 +8,17 @@ def get_args():
         TSL datasets
             metrLA: METR-LA dataset
             pemsBay: PEMS-BAY dataset
-        individual datasets
+        benchmark datasets
+            electricity
+            exchange
+            traffic
+            solar
     --model
-        tts_rnn_gcn: time then space model --  tRNN, sGCN
-        tts_trf_gat: time then space model -- tTRF, sGAT
-        tgat: temporal GAT
-        travnet: traversenet
-        
-        dstan_v1: dynamic spatio-temporal attention network v1
-        dstan_v2: dynamic spatio-temporal attention network
+        tts_rnn_gcn: benchmark RNN + GCN model
+        tan: Temporal Attention Network
+        mp_dstan: Message Passing DSTAN
+        transformer_dsta: Transformer using DSTAN
+        dstan: flagship attention model
     --program
         train: train model
         tune: tune model
@@ -26,8 +28,8 @@ def get_args():
     """
     parser = argparse.ArgumentParser(description="Temporal GNN Research")
     
-    parser.add_argument("-d", "--dataset", type=str, default="metrLA", choices=['metrLA', 'pemsbay'], help="Dataset to use")
-    parser.add_argument("-m", "--model", type=str, default="mp_dstan", choices=['st_tran', 'travnet', 'tts_rnn_gcn', 'tts_trf_gat', 'tgat', 'dstan_v1', 'tan', 'mp_dstan', 'mp_dstanv2', 'transformer_dsta'], help="Model to use")
+    parser.add_argument("-d", "--dataset", type=str, default="metrLA", choices=['metrLA', 'pemsbay', 'electricity', 'exchange', 'traffic', 'solar'], help="Dataset to use")
+    parser.add_argument("-m", "--model", type=str, default="dstan", choices=['tts_rnn_gcn', 'tan', 'mp_dstan', 'transformer_dsta', 'dstan', 'dstan_experiments'], help="Model to use")
     parser.add_argument("-p", "--program", type=str, default="train", choices=['train', 'tune'], help="Program to run")
     parser.add_argument("-w", "--wandb", type=str, default="disabled", choices=['e', 'enabled', 'd', 'disabled'], help="Wandb mode")
     

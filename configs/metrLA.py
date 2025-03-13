@@ -29,11 +29,11 @@ def get_config():
     config.test_ratio = 0.2
     
     # Transformer Setup
-    config.num_heads = 1
+    config.num_heads = 8
     config.attention_dropout = 0.0
-    config.cross_dropout = 0.2
+    config.cross_dropout = 0.6
     config.ff_dropout = 0.1
-    config.num_layers = 2
+    config.num_layers = 1
     
     # Space Model
     config.space_hidden = 32
@@ -46,13 +46,15 @@ def get_config():
     config.tgat_hidden = 32
     
     # DSTAN
-    config.dstan_hidden = 32
+    config.dstan_hidden = 8
+    config.conv_layers = 1
+    config.negative_slope = 0.2
     
     # Training
     config.warmup_epochs = 5
     config.epochs = 100
-    config.lr = 1e-3
-    config.lr_min = 5e-6
+    config.lr = 5e-3
+    config.lr_min = 1e-3
     config.lr_step_size = 20
     config.lr_gamma = 0.8
     config.early_stopping = False
@@ -60,6 +62,7 @@ def get_config():
     config.es_delta = 0.0
     
     # misc.
+    config.runs = 1
     config.verbose = True
     config.time_verbose = True
 

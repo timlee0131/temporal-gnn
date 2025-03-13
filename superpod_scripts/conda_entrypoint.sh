@@ -13,7 +13,7 @@ trap 'sig_handler' SIGTERM SIGINT SIGCONT
 cd /users/hunjael/Projects/temporal-gnn/
 python -m pip install -r requirements.txt
 
-python main.py -d metrLA -m mp_dstanv2 -w enabled
+python main.py -d electricity -m dstan -w enabled
 
 srun_pid=$!
 wait $srun_pid

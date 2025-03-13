@@ -142,6 +142,38 @@ class PositionalEncoding(nn.Module):
             raise ValueError("Unsupported input dimension for PositionalEncoding")
         return self.dropout(x)
 
+def pe_flat(x, method='linear'):
+    """
+    Adds positional encoding to input tensor x along the D dimension.
+    
+    Args:
+        x (torch.Tensor): Input tensor of shape (B, N, D) where:
+            B is batch size
+            N is number of nodes
+            D is feature dimension (treated as the dimension requiring temporal continuity)
+        method (str): Type of encoding to use ('linear' or 'sinusoidal')
+        
+    Returns:
+        torch.Tensor: Input tensor with positional encoding added, shape (B, N, D)
+    """
+    B, N, D = x.shape
+    
+    if method == 'linear':
+        # Linear ramp from 0 to 1 across the D dimension
+        pos = torch.linspace(0, 1, steps=D, device=x.device)
+    elif method == 'sinusoidal':
+        # Sinusoidal encoding across the D dimension
+        pos = torch.arange(D, dtype=torch.float32, device=x.device)
+        pos = torch.sin(2 * math.pi * pos / D)
+    else:
+        raise ValueError("Method must be 'linear' or 'sinusoidal'")
+    
+    # Expand positional encoding to match input tensor shape
+    pe = pos.unsqueeze(0).unsqueeze(0).expand(B, N, D)
+    
+    # Add positional encoding to input tensor
+    return x + pe
+
 def build_combined_mask(edge_index, edge_weight, N, T, mask_self=False):
     """
     Constructs a combined mask of shape (N*T, N*T) that embeds:
